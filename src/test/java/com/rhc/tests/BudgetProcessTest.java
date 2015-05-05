@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.rhc.harness.BaseBPMNTest;
 
 /**
- * This is an example BPMN test case for a Budget Process that includes 
+ * This is an example BPMN test class for a Budget Process that includes 
  * gateways, timers, and user tasks.
  * 
  * @author jcohler
@@ -39,8 +39,7 @@ public class BudgetProcessTest extends BaseBPMNTest {
 		assertNodeActive(processInstance.getId(), ksession, "Budget Exceeded");
 		
 		completeWorkItem("BudgetExceeded", null);
-		
-		assertProcessInstanceCompleted(processInstance.getId(), ksession);
+		assertProcessInstanceCompleted(processInstance.getId());
 	}
 	
 	@Test
@@ -67,8 +66,6 @@ public class BudgetProcessTest extends BaseBPMNTest {
 		logger.info("Waiting 2 seconds for timer event to fire...");
 		Thread.sleep(2200);
 		
-		assertProcessInstanceCompleted(processInstance.getId(), ksession);
-		
-		
+		assertProcessInstanceCompleted(processInstance.getId());
 	}
 }

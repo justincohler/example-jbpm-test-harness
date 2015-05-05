@@ -9,7 +9,7 @@
 
 	<properties>
 		<junit.version>4.12</junit.version>
-		<jbpm.version>6.0.3-redhat-6</jbpm.version>
+		<jbpm.version>6.2.0.Final-redhat-4</jbpm.version>
 		<slf4j.version>1.7.10</slf4j.version>
 	</properties>
 
