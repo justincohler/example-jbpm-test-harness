@@ -1,4 +1,4 @@
-package com.rhc.tests;
+package com.rhc.example;
 
 import java.util.HashMap;
 import java.util.Map;
