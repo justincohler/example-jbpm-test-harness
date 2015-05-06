@@ -7,7 +7,7 @@ This class is the core of the test harness. It acts as a simple parent that init
 Every test should extend BaseBPMNTest, which itself extends the JbpmJUnitBaseTestCase, the out-of-the-box test framework.
 
 ## Test Harness Organization Options
-This test harness can be afixed to a BPMS project (kjar) in the following ways:
+This test harness can be affixed to a BPMS project (kjar) in the following ways:
 * As a sibling module of the BPMS project under a common parent (preferred)
 * As a standalone project that imports the BPMS project as a dependency
 * As a module under the BPMS project (i.e. a parent-child relationship)
