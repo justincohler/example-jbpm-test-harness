@@ -8,8 +8,8 @@ Every test should extend BaseBPMNTest, which itself extends the JbpmJUnitBaseTes
 
 ## Test Harness Organization Options
 This test harness can be afixed to a BPMS project (kjar) in the following ways:
-### As a sibling module of the BPMS project under a common parent (preferred)
-### As a standalone project that imports the BPMS project as a dependency
-### As a module under the BPMS project (i.e. a parent-child relationship)
-### Within the BPMS project itself
-#### Note: BPMS current Maven functionality does not recognize <scope> tags, so including "provided" or "test" scope to this dependency will not prevent the test harness from being included on the build path of the project.
+* As a sibling module of the BPMS project under a common parent (preferred)
+* As a standalone project that imports the BPMS project as a dependency
+* As a module under the BPMS project (i.e. a parent-child relationship)
+* Within the BPMS project itself
+** Note: BPMS current Maven functionality does not recognize <scope> tags, so including "provided" or "test" scope to this dependency will not prevent the test harness from being included on the build path of the project.
