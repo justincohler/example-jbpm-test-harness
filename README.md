@@ -12,4 +12,4 @@ This test harness can be afixed to a BPMS project (kjar) in the following ways:
 * As a standalone project that imports the BPMS project as a dependency
 * As a module under the BPMS project (i.e. a parent-child relationship)
 * Within the BPMS project itself
-** Note: BPMS current Maven functionality does not recognize <scope> tags, so including "provided" or "test" scope to this dependency will not prevent the test harness from being included on the build path of the project.
+*** Note: BPMS current Maven functionality does not recognize <scope> tags, so including "provided" or "test" scope to this dependency will not prevent the test harness from being included on the build path of the project.
