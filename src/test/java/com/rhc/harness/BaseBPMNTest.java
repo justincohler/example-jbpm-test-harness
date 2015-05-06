@@ -1,7 +1,4 @@
 /*
- * Written by Red Hat Consulting.
- * 
- * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
  * 
@@ -93,18 +90,18 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * 
    * @param itemName
    * @param itemOutput
-   * @throws NoSuchFieldException
+   * 
    */
   public void completeWorkItem(String itemName, Map<String, Object> itemOutput) {
-    boolean foundItem = false;
+    boolean itemExists = false;
 
     for (WorkItem item : getTestWorkItemHandler().getWorkItems()) {
       if (((String) item.getParameter("NodeName")).equalsIgnoreCase(itemName)) {
-        foundItem = true;
+        itemExists = true;
         ksession.getWorkItemManager().completeWorkItem(item.getId(), itemOutput);
       }
     }
-    if (!foundItem) {
+    if (!itemExists) {
       fail("The following Work Item was not found or could not be completed: " + itemName);
     }
   }
