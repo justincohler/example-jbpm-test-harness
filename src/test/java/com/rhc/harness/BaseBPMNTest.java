@@ -99,6 +99,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
       if (((String) item.getParameter("NodeName")).equalsIgnoreCase(itemName)) {
         itemExists = true;
         ksession.getWorkItemManager().completeWorkItem(item.getId(), itemOutput);
+        break;
       }
     }
     if (!itemExists) {
