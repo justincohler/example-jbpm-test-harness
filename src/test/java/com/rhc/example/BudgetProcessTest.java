@@ -54,12 +54,9 @@ public class BudgetProcessTest extends BaseBPMNTest {
 
     assertNodeTriggered(processInstance.getId(), "Determine Budget Remaining");
     assertNodeActive(processInstance.getId(), ksession, "Budget Exceeded");
+    
+    completeWorkItem("BudgetExceeded", null);
 
-    try {
-      completeWorkItem("Budget Exceeded", null);
-    } catch (NoSuchFieldException e) {
-      fail(e.getMessage());
-    }
     assertProcessInstanceNotActive(processInstance.getId(), ksession);
   }
 
@@ -79,11 +76,8 @@ public class BudgetProcessTest extends BaseBPMNTest {
 
     Map<String, Object> itemOutput = new HashMap<String, Object>();
     itemOutput.put("timerDuration", "2s");
-    try {
-      completeWorkItem("Review Budget Remaining", itemOutput);
-    } catch (NoSuchFieldException e) {
-      fail(e.getMessage());
-    }
+    
+    completeWorkItem("Review Budget Remaining", itemOutput);
 
     assertProcessInstanceActive(processInstance.getId(), ksession);
     // sleep just a bit longer than the timer to be safe
