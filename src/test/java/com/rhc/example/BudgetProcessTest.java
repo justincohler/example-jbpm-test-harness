@@ -27,7 +27,7 @@ public class BudgetProcessTest extends BaseBPMNTest {
   public static void setTestResources() {
     setTestResources("budgetProcess.bpmn2");
   }
-  
+
   @Test
   public void should_escalate_exceeded_budget() {
     processVars.put("user1", TESTSUITE_ACTOR);
