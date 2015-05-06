@@ -55,7 +55,7 @@ public class BudgetProcessTest extends BaseBPMNTest {
     assertNodeTriggered(processInstance.getId(), "Determine Budget Remaining");
     assertNodeActive(processInstance.getId(), ksession, "Budget Exceeded");
     
-    completeWorkItem("BudgetExceeded", null);
+    completeWorkItem("Budget Exceeded", null);
 
     assertProcessInstanceNotActive(processInstance.getId(), ksession);
   }
