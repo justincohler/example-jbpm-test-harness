@@ -40,7 +40,6 @@ public class BudgetProcessTest extends BaseBPMNTest {
 
   @Test
   public void should_escalate_exceeded_budget() {
-    processVars.put("user1", TESTSUITE_ACTOR);
     processVars.put("spending", 10001);
 
     processInstance = ksession.startProcess(P_BUDGET, processVars);
@@ -59,7 +58,6 @@ public class BudgetProcessTest extends BaseBPMNTest {
 
   @Test
   public void should_not_escalate_exceeded_budget() throws InterruptedException {
-    processVars.put("user1", TESTSUITE_ACTOR);
     processVars.put("spending", 9999);
 
     processInstance = ksession.startProcess(P_BUDGET, processVars);
@@ -67,7 +65,6 @@ public class BudgetProcessTest extends BaseBPMNTest {
 
     WorkflowProcessInstanceImpl workflowInstance = (WorkflowProcessInstanceImpl) processInstance;
     assertEquals(9999, workflowInstance.getVariable("spending"));
-
     assertNodeTriggered(processInstance.getId(), "Determine Budget Remaining");
     assertNodeActive(processInstance.getId(), ksession, "Review Budget Remaining");
 

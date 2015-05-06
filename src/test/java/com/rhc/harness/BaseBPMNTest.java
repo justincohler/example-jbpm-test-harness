@@ -32,7 +32,6 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
 
   private static final Logger logger = LoggerFactory.getLogger(BaseBPMNTest.class);
 
-  protected static final String TESTSUITE_ACTOR = "test";
   private static final String HUMAN_TASK = "Human Task";
   private static final String REST_TASK = "Rest";
 
