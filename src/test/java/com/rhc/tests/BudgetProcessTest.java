@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,15 @@ import com.rhc.harness.BaseBPMNTest;
 public class BudgetProcessTest extends BaseBPMNTest {
 
   private static final Logger logger = LoggerFactory.getLogger(BudgetProcessTest.class);
-  private static final String P_BUDGET = "budgeting.budgetProcess";
+  private static final String P_BUDGET = "project1.budgetProcess";
 
+  @BeforeClass
+  public static void setTestResources() {
+    setTestResources("budgetProcess.bpmn2");
+  }
+  
   @Test
   public void should_escalate_exceeded_budget() {
-    setTestResources("budgetProcess.bpmn2");
     processVars.put("user1", TESTSUITE_ACTOR);
     processVars.put("spending", 10001);
 
@@ -32,22 +37,21 @@ public class BudgetProcessTest extends BaseBPMNTest {
     assertProcessInstanceActive(processInstance.getId(), ksession);
 
     WorkflowProcessInstanceImpl workflowInstance = (WorkflowProcessInstanceImpl) processInstance;
-    assertEquals(12345, workflowInstance.getVariable("spending"));
+    assertEquals(10001, workflowInstance.getVariable("spending"));
 
     assertNodeTriggered(processInstance.getId(), "Determine Budget Remaining");
     assertNodeActive(processInstance.getId(), ksession, "Budget Exceeded");
 
     try {
-      completeWorkItem("BudgetExceeded", null);
+      completeWorkItem("Budget Exceeded", null);
     } catch (NoSuchFieldException e) {
       fail(e.getMessage());
     }
-    assertProcessInstanceCompleted(processInstance.getId());
+    assertProcessInstanceNotActive(processInstance.getId(), ksession);
   }
 
   @Test
   public void should_not_escalate_exceeded_budget() throws InterruptedException {
-    setTestResources("budgetProcess.bpmn2");
     processVars.put("user1", TESTSUITE_ACTOR);
     processVars.put("spending", 9999);
 
@@ -55,7 +59,7 @@ public class BudgetProcessTest extends BaseBPMNTest {
     assertProcessInstanceActive(processInstance.getId(), ksession);
 
     WorkflowProcessInstanceImpl workflowInstance = (WorkflowProcessInstanceImpl) processInstance;
-    assertEquals(12345, workflowInstance.getVariable("spending"));
+    assertEquals(9999, workflowInstance.getVariable("spending"));
 
     assertNodeTriggered(processInstance.getId(), "Determine Budget Remaining");
     assertNodeActive(processInstance.getId(), ksession, "Review Budget Remaining");
@@ -68,10 +72,11 @@ public class BudgetProcessTest extends BaseBPMNTest {
       fail(e.getMessage());
     }
 
+    assertProcessInstanceActive(processInstance.getId(), ksession);
     // sleep just a bit longer than the timer to be safe
     logger.info("Waiting 2 seconds for timer event to fire...");
     Thread.sleep(2200);
 
-    assertProcessInstanceCompleted(processInstance.getId());
+    assertProcessInstanceNotActive(processInstance.getId(), ksession);
   }
 }

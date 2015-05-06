@@ -50,7 +50,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * e.g. ["myFirstProcess.bpmn2", "mySecondProcess.bpmn2"]
    * 
    */
-  protected List<String> testResources = new ArrayList<String>();
+  protected static List<String> testResources = new ArrayList<String>();
 
   /**
    * This map contains the process variables within each particular process
@@ -66,8 +66,8 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
   @Before
   public void createKnowledgeSession() {
     logger.info("Setting up knowledge session for resources: " + testResources.toString());
-    createRuntimeManager((String[]) testResources.toArray());
-    ksession = getRuntimeEngine().getKieSession();
+    createRuntimeManager(testResources.toArray(new String[testResources.size()]));
+    ksession = getRuntimeEngine(null).getKieSession();
     ksession.getWorkItemManager().registerWorkItemHandler(HUMAN_TASK, getTestWorkItemHandler());
     ksession.getWorkItemManager().registerWorkItemHandler(REST_TASK, getTestWorkItemHandler());
     /*
@@ -88,6 +88,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
   public void completeWorkItem(String itemName, Map<String, Object> itemOutput)
       throws NoSuchFieldException {
     boolean foundItem = false;
+
     for (WorkItem item : getTestWorkItemHandler().getWorkItems()) {
       if (((String) item.getParameter("NodeName")).equalsIgnoreCase(itemName)) {
         foundItem = true;
@@ -106,7 +107,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * 
    * @param resources
    */
-  public void setTestResources(String... resources) {
+  public static void setTestResources(String... resources) {
     testResources.clear();
     testResources.addAll(Arrays.asList(resources));
   }
