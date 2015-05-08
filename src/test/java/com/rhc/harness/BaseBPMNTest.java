@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
+
 import org.jbpm.test.JbpmJUnitBaseTestCase;
 import org.junit.Before;
 import org.kie.api.runtime.KieSession;
@@ -65,6 +67,12 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
   protected Map<String, Object> processVars = new HashMap<String, Object>();
 
   /**
+   * This list contains active workItems, and needs to be kept since the testWorkItemHandler deletes
+   * workItems from the JbpmJUnitBaseTestCase on retrieval.
+   */
+  private List<WorkItem> workItems = new ArrayList<WorkItem>();
+  
+  /**
    * This method is run before each individual BPMN test to set a new knowledge session with the
    * resources required for the test to run successfully.
    * 
@@ -94,10 +102,18 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
   public void completeWorkItem(String itemName, Map<String, Object> itemOutput) {
     boolean itemExists = false;
 
-    for (WorkItem item : getTestWorkItemHandler().getWorkItems()) {
+    workItems.addAll(getTestWorkItemHandler().getWorkItems());
+    
+    for (Iterator<WorkItem> it = workItems.iterator(); it.hasNext();) {
+      WorkItem item = it.next();
       if (((String) item.getParameter("NodeName")).equalsIgnoreCase(itemName)) {
         itemExists = true;
         ksession.getWorkItemManager().completeWorkItem(item.getId(), itemOutput);
+        if (item.getState() == WorkItem.COMPLETED) {
+          it.remove();
+        } else {
+          fail("Failed to complete the Work Item: " + itemName);
+        }
         break;
       }
     }
