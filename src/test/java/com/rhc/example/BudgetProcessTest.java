@@ -35,7 +35,7 @@ public class BudgetProcessTest extends BaseBPMNTest {
 
   @BeforeClass
   public static void setTestResources() {
-    setTestResources("budgetProcess.bpmn2");
+    setProcesses("budgetProcess.bpmn2");
   }
 
   @Test

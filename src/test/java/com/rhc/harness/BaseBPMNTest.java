@@ -14,13 +14,18 @@ package com.rhc.harness;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
+import java.util.Set;
 
 import org.jbpm.test.JbpmJUnitBaseTestCase;
+import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.junit.Before;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.runtime.process.NodeInstanceContainer;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkItem;
 import org.slf4j.Logger;
@@ -58,7 +63,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * e.g. ["myFirstProcess.bpmn2", "mySecondProcess.bpmn2"]
    * 
    */
-  protected static List<String> testResources = new ArrayList<String>();
+  protected static List<String> processes = new ArrayList<String>();
 
   /**
    * This map contains the process variables within each particular process
@@ -71,7 +76,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * workItems from the JbpmJUnitBaseTestCase on retrieval.
    */
   private List<WorkItem> workItems = new ArrayList<WorkItem>();
-  
+
   /**
    * This method is run before each individual BPMN test to set a new knowledge session with the
    * resources required for the test to run successfully.
@@ -79,8 +84,8 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    */
   @Before
   public void createKnowledgeSession() {
-    logger.info("Setting up knowledge session for resources: " + testResources.toString());
-    createRuntimeManager(testResources.toArray(new String[testResources.size()]));
+    logger.info("Setting up knowledge session for resources: " + processes.toString());
+    createRuntimeManager(processes.toArray(new String[processes.size()]));
     ksession = getRuntimeEngine(null).getKieSession();
     ksession.getWorkItemManager().registerWorkItemHandler(HUMAN_TASK, getTestWorkItemHandler());
     ksession.getWorkItemManager().registerWorkItemHandler(REST_TASK, getTestWorkItemHandler());
@@ -89,6 +94,17 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
      */
     processVars.clear();
     logger.info("Knowledge session created successfully.");
+  }
+
+  /**
+   * This method sets this base class with the resource names to be injected in the ksession for
+   * each individual test.
+   * 
+   * @param resources
+   */
+  public static void setProcesses(String... resources) {
+    processes.clear();
+    processes.addAll(Arrays.asList(resources));
   }
 
   /**
@@ -103,7 +119,7 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
     boolean itemExists = false;
 
     workItems.addAll(getTestWorkItemHandler().getWorkItems());
-    
+
     for (Iterator<WorkItem> it = workItems.iterator(); it.hasNext();) {
       WorkItem item = it.next();
       if (((String) item.getParameter("NodeName")).equalsIgnoreCase(itemName)) {
@@ -123,14 +139,60 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
   }
 
   /**
-   * This method sets this base class with the resource names to be injected in the ksession for
-   * each individual test.
+   * This method is an opposite clone of the assertNodeActive method ootb in the
+   * JbpmJUnitBaseTestCase.
    * 
-   * @param resources
+   * @param processInstanceId
+   * @param ksession
+   * @param name
    */
-  public static void setTestResources(String... resources) {
-    testResources.clear();
-    testResources.addAll(Arrays.asList(resources));
+  public void assertNodeNotActive(long processInstanceId, KieSession ksession, String... name) {
+    Set<String> names = new HashSet<String>();
+    Set<String> activeNodes = new HashSet<String>();
+    for (String n : name) {
+      names.add(n);
+    }
+    ProcessInstance processInstance = ksession.getProcessInstance(processInstanceId);
+    if (processInstance instanceof WorkflowProcessInstance) {
+      activeNodes = assertNodeNotActive((WorkflowProcessInstance) processInstance, names, null);
+    }
+    if (!activeNodes.isEmpty()) {
+      StringBuilder sb = new StringBuilder();
+      int count = 0;
+      for (String activeNode : activeNodes) {
+        if (count != 0) {
+          sb.append(", ");
+        }
+        sb.append(activeNode);
+        count++;
+      }
+      fail("Node(s) active: " + sb.toString());
+    }
+  }
+
+  /**
+   * This method is an opposite clone of the assertNodeActive recursive helper method ootb in the
+   * JbpmJUnitBaseTestCase.
+   * 
+   * @param processInstanceId
+   * @param ksession
+   * @param name
+   */
+  public Set<String> assertNodeNotActive(NodeInstanceContainer container, Set<String> names,
+      Set<String> activeNodes) {
+    if (activeNodes == null) {
+      activeNodes = new HashSet<String>();
+    }
+    for (NodeInstance nodeInstance : container.getNodeInstances()) {
+      String nodeName = nodeInstance.getNodeName();
+      if (names.contains(nodeName)) {
+        activeNodes.add(nodeName);
+      }
+      if (nodeInstance instanceof NodeInstanceContainer) {
+        return assertNodeNotActive((NodeInstanceContainer) nodeInstance, names, activeNodes);
+      }
+    }
+    return activeNodes;
   }
 
 }
