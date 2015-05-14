@@ -196,6 +196,12 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
     return activeNodes;
   }
 
+  /**
+   * This method is an opposite clone of the assertNodeTriggered ootb in the JbpmJUnitBaseTestCase.
+   * 
+   * @param processInstanceId
+   * @param nodeNames
+   */
   public void assertNodeNotTriggered(long processInstanceId, String... nodeNames) {
     List<String> names = new ArrayList<String>();
     List<String> triggeredNodes = new ArrayList<String>();
