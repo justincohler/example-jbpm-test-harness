@@ -8,34 +8,74 @@
 	<description>A sample test harness using the JBPM JUnit Test Case (Works with BPMS 6.1.0)</description>
 
 	<properties>
-		<junit.version>4.12</junit.version>
-		<jbpm.version>6.2.0.Final-redhat-4</jbpm.version>
-		<slf4j.version>1.7.10</slf4j.version>
+		<version.junit>4.12</version.junit>
+		<version.cucumber>1.2.2</version.cucumber>
+		<version.jbpm>6.2.0.Final-redhat-4</version.jbpm>
+		<version.slf4j>1.7.10</version.slf4j>
+		<version.spring>4.1.6.RELEASE</version.spring>
 	</properties>
 
 	<dependencies>
+
+		<!-- Cucumber Dependencies -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${version.cucumber}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-spring</artifactId>
+			<version>${version.cucumber}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${version.cucumber}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Spring Dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+
+		<!-- JUnit Dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${version.junit}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- JBPM Dependencies -->
+		<dependency>
 			<groupId>org.jbpm</groupId>
 			<artifactId>jbpm-test</artifactId>
-			<version>${jbpm.version}</version>
+			<version>${version.jbpm}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jbpm</groupId>
 			<artifactId>jbpm-workitems</artifactId>
-			<version>${jbpm.version}</version>
+			<version>${version.jbpm}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Logging Dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
+			<version>${version.slf4j}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

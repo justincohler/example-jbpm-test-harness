@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -36,6 +37,11 @@ public class BudgetProcessTest extends BaseBPMNTest {
   @BeforeClass
   public static void setTestResources() {
     setProcesses("budgetProcess.bpmn2");
+  }
+  
+  @Before
+  public void init() {
+    createKnowledgeSession();
   }
 
   @Test

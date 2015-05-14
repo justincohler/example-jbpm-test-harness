@@ -22,7 +22,6 @@ import org.drools.core.audit.event.LogEvent;
 import org.drools.core.audit.event.RuleFlowNodeLogEvent;
 import org.jbpm.test.JbpmJUnitBaseTestCase;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
-import org.junit.Before;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.audit.NodeInstanceLog;
 import org.kie.api.runtime.process.NodeInstance;
@@ -83,7 +82,6 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * resources required for the test to run successfully.
    * 
    */
-  @Before
   public void createKnowledgeSession() {
     logger.info("Setting up knowledge session for resources: " + processes.toString());
     createRuntimeManager(processes.toArray(new String[processes.size()]));
