@@ -14,16 +14,17 @@ package com.rhc.harness;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.drools.core.audit.event.LogEvent;
+import org.drools.core.audit.event.RuleFlowNodeLogEvent;
 import org.jbpm.test.JbpmJUnitBaseTestCase;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.junit.Before;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.manager.audit.NodeInstanceLog;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.NodeInstanceContainer;
 import org.kie.api.runtime.process.ProcessInstance;
@@ -147,8 +148,8 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * @param name
    */
   public void assertNodeNotActive(long processInstanceId, KieSession ksession, String... name) {
-    Set<String> names = new HashSet<String>();
-    Set<String> activeNodes = new HashSet<String>();
+    List<String> names = new ArrayList<String>();
+    List<String> activeNodes = new ArrayList<String>();
     for (String n : name) {
       names.add(n);
     }
@@ -178,10 +179,10 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
    * @param ksession
    * @param name
    */
-  public Set<String> assertNodeNotActive(NodeInstanceContainer container, Set<String> names,
-      Set<String> activeNodes) {
+  public List<String> assertNodeNotActive(NodeInstanceContainer container, List<String> names,
+      List<String> activeNodes) {
     if (activeNodes == null) {
-      activeNodes = new HashSet<String>();
+      activeNodes = new ArrayList<String>();
     }
     for (NodeInstance nodeInstance : container.getNodeInstances()) {
       String nodeName = nodeInstance.getNodeName();
@@ -193,6 +194,42 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
       }
     }
     return activeNodes;
+  }
+
+  public void assertNodeNotTriggered(long processInstanceId, String... nodeNames) {
+    List<String> names = new ArrayList<String>();
+    List<String> triggeredNodes = new ArrayList<String>();
+    for (String nodeName : nodeNames) {
+      names.add(nodeName);
+    }
+    if (sessionPersistence) {
+      List<? extends NodeInstanceLog> logs = getLogService().findNodeInstances(processInstanceId);
+      if (logs != null) {
+        for (NodeInstanceLog l : logs) {
+          String nodeName = l.getNodeName();
+          if ((l.getType() == NodeInstanceLog.TYPE_ENTER || l.getType() == NodeInstanceLog.TYPE_EXIT)
+              && names.contains(nodeName)) {
+            triggeredNodes.add(nodeName);
+          }
+        }
+      }
+    } else {
+      for (LogEvent event : getInMemoryLogger().getLogEvents()) {
+        if (event instanceof RuleFlowNodeLogEvent) {
+          String nodeName = ((RuleFlowNodeLogEvent) event).getNodeName();
+          if (names.contains(nodeName)) {
+            triggeredNodes.add(nodeName);
+          }
+        }
+      }
+    }
+    if (!triggeredNodes.isEmpty()) {
+      String s = triggeredNodes.get(0);
+      for (int i = 1; i < triggeredNodes.size(); i++) {
+        s += ", " + triggeredNodes.get(i);
+      }
+      fail("Node(s) executed: " + s);
+    }
   }
 
 }
