@@ -49,6 +49,7 @@ public class BudgetProcessTest extends BaseBPMNTest {
     assertEquals(10001, workflowInstance.getVariable("spending"));
 
     assertNodeTriggered(processInstance.getId(), "Determine Budget Remaining");
+    assertTaskOwnedBy("Budget Exceeded", null);
     assertNodeActive(processInstance.getId(), ksession, "Budget Exceeded");
     
     completeWorkItem("Budget Exceeded", null);

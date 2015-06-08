@@ -172,6 +172,34 @@ public class BaseBPMNTest extends JbpmJUnitBaseTestCase {
   }
 
   /**
+   * This method asserts a given active task is owned by a particular username
+   * 
+   * @param container
+   * @param names
+   * @param activeNodes
+   */
+  public void assertTaskOwnedBy(String taskName, String owner) {
+
+    boolean itemExists = false;
+
+    workItems.addAll(getTestWorkItemHandler().getWorkItems());
+
+    for (Iterator<WorkItem> it = workItems.iterator(); it.hasNext();) {
+      WorkItem item = it.next();
+      if (((String) item.getParameter("NodeName")).equalsIgnoreCase(taskName)) {
+        if (((String) item.getParameter("ActorId")).isEmpty() && (owner == null || owner == "")) {
+          return;
+        } else if (!((String) item.getParameter("ActorId")).equalsIgnoreCase(owner)) {
+          fail("Task \"" + taskName + "\" expected owner \"" + owner + "\" but was \"" + item.getParameter("ActorId") + "\"");
+        } 
+      }
+    }
+    if (!itemExists) {
+      fail("The following Work Item was not found or could not be completed: " + taskName);
+    }
+  }
+
+  /**
    * This method is an opposite clone of the assertNodeActive recursive helper method ootb in the
    * JbpmJUnitBaseTestCase.
    * 
